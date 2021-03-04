@@ -102,10 +102,10 @@ public class UserFilter implements Filter {
                     return;
                 }
             }
+            filterChain.doFilter(request, response);
         } else {
             filterChain.doFilter(servletRequest, servletResponse);
         }
-
     }
 
     @Override

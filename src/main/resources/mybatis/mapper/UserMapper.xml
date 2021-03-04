@@ -16,7 +16,7 @@
     <insert id="registry" parameterType="com.cyq.product.domain.UserDo">
        insert into `t_user` (
              `user_code`, `user_name`, `password`, `phone`
-       ) vaules (
+       ) value (
             #{userCode}, #{userName}, #{password}, #{phone}
        )
     </insert>

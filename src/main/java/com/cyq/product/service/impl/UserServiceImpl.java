@@ -37,6 +37,7 @@ public class UserServiceImpl implements UserService {
         userDo.setUserName(userVo.getUserName());
         userDo.setPassword(SecureUtil.md5(password));
         userDo.setPhone(userVo.getPassword());
+        userMapper.registry(userDo);
     }
 
     @Override
