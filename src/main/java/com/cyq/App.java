@@ -9,7 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * 主启动类
  */
 @SpringBootApplication
-@MapperScan(value = "com.cyq.product.mapper")
+@MapperScan(basePackages = "com.cyq.product.mapper")
 public class App {
 
     public static void main(String[] args) {

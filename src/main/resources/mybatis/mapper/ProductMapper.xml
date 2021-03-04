@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyq.product.mapper.ProductMapper">
+
+    <sql id="productBaseFiled">
+        id,
+        p_name,
+        p_origin_price,
+        p_discount_price,
+        p_category_name,
+        p_postage,
+        p_desc,
+        p_image_major_url,
+        p_image_urls,
+        p_publish,
+        p_details_info,
+        p_create_time,
+        p_update_time
+    </sql>
+
+    <resultMap id="productMap1" type="com.cyq.product.domain.ProductDo">
+        <id property="id" column="id"/>
+        <result property="name" column="p_name"/>
+        <result property="originPrice" column="p_origin_price"/>
+        <result property="discountPrice" column="p_discount_price"/>
+        <result property="imageMajorUrl" column="p_image_major_url"/>
+    </resultMap>
+
+    <resultMap id="productMap2" type="com.cyq.product.domain.ProductDo">
+        <id property="id" column="id"/>
+        <result property="name" column="p_name"/>
+        <result property="originPrice" column="p_origin_price"/>
+        <result property="discountPrice" column="p_discount_price"/>
+        <result property="imageMajorUrl" column="p_image_major_url"/>
+        <result property="publish" column="p_publish"/>
+        <result property="createTime" column="p_create_time"/>
+        <result property="updateTime" column="p_update_time"/>
+        <result property="order" column="p_order"/>
+    </resultMap>
+
+    <resultMap id="productMap3" type="com.cyq.product.domain.ProductDo">
+        <id property="id" column="id"/>
+        <result property="name" column="p_name"/>
+        <result property="originPrice" column="p_origin_price"/>
+        <result property="discountPrice" column="p_discount_price"/>
+        <result property="categoryName" column="p_category_name"/>
+        <result property="postage" column="p_postage"/>
+        <result property="desc" column="p_desc"/>
+        <result property="imageMajorUrl" column="p_image_major_url"/>
+        <result property="imageUrls" column="p_image_urls"/>
+        <result property="publish" column="p_publish"/>
+        <result property="detailsInfo" column="p_details_info"/>
+        <result property="order" column="p_order"/>
+    </resultMap>
+
+    <select id="getProductsForPgae" resultMap="productMap1">
+        select
+            id,
+            p_name,
+            p_origin_price,
+            p_discount_price,
+            p_image_major_url,
+        from t_product where p_publish = 1 and p_del = 1 order by p_order
+    </select>
+
+    <select id="getProducts" resultMap="productMap2">
+        select
+        id,
+        p_name,
+        p_origin_price,
+        p_discount_price,
+        p_image_major_url,
+        p_publish,
+        p_create_time,
+        p_update_time,
+        p_order
+        from t_product where p_publish = 1 and p_del = 1 order by p_order
+    </select>
+
+    <insert id="saveProduct" parameterType="com.cyq.product.domain.ProductDo">
+        insert into `t_product`
+        (
+            <include refid="productBaseFiled"/>
+        ) value (
+            #{id},
+            #{name},
+            #{originPrice},
+            #{discountPrice},
+            #{categoryName},
+            #{postage},
+            #{desc},
+            #{imageMajorUrl}
+            #{imageUrls},
+            #{publish},
+            #{detailsInfo},
+            #{createTime},
+            #{updateTime}
+        )
+    </insert>
+
+    <delete id="deleteProduct" parameterType="String">
+        delete from t_product where id = #{id}
+    </delete>
+
+    <select id="getProduct" parameterType="String" resultMap="productMap3">
+        select
+            id,
+            p_name,
+            p_origin_price,
+            p_discount_price,
+            p_category_name,
+            p_postage,
+            p_desc,
+            p_image_major_url,
+            p_image_urls,
+            p_publish,
+            p_details_info,
+            p_order
+        from t_product where id = #{id} limit 1
+    </select>
+
+</mapper>

@@ -1,6 +1,7 @@
 package com.cyq.product.mapper;
 
-import com.cyq.product.domain.Role;
+import com.cyq.product.domain.UserRole;
+import com.cyq.product.model.RoleVo;
 
 import java.util.List;
 
@@ -10,10 +11,41 @@ import java.util.List;
 public interface RoleMapper {
 
     /**
+     * 获取所有的角色信息
+     * @return
+     */
+    List<RoleVo> findRoles();
+
+    /**
+     * 添加角色信息
+     * @param roleVo
+     */
+    void addRole(RoleVo roleVo);
+
+    /**
+     * 更新角色信息
+     * @param roleVo
+     */
+    void updateRole(RoleVo roleVo);
+
+    /**
+     * 根据ID删除角色信息
+     * @param id
+     */
+    void deleteRole(Integer id);
+
+    /**
      * 通过用户ID获取角色信息
      * @param userId
      * @return
      */
-    List<Role> getRolesByUserId(Integer userId);
+    List<RoleVo> getRolesByUserId(Integer userId);
+
+    /**
+     * 根据角色ID获取用户与角色相关数据
+     * @param roleId
+     * @return
+     */
+    int getUserRoleByRoleId(Integer roleId);
 
 }

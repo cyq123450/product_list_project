@@ -1,19 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.cyq.product.mapper.RoleMapper">
+<mapper namespace="com.cyq.product.mapper.UserMapper">
 
-    <resultMap id="userFiledMappingMap" type="com.cyq.product.domain.User">
+    <resultMap id="userMap" type="com.cyq.product.domain.UserDo">
         <id property="id" column="id"/>
+        <result property="userCode" column="user_code"/>
         <result property="userName" column="user_name"/>
         <result property="password" column="password"/>
         <result property="phone" column="phone"/>
+        <result property="del" column="is_del"/>
         <result property="enabled" column="enabled"/>
-        <collection property="roles" column="id" select="com.cyq.product.mapper.RoleMapper.getRolesByUserId"></collection>
     </resultMap>
 
-    <select id="findUserByUserName" parameterType="String" resultMap="userFiledMappingMap">
-        select * from t_user where user_name = #{userName}
+    <insert id="registry" parameterType="com.cyq.product.domain.UserDo">
+       insert into `t_user` (
+             `user_code`, `user_name`, `password`, `phone`
+       ) vaules (
+            #{userCode}, #{userName}, #{password}, #{phone}
+       )
+    </insert>
+
+    <select id="findUserByUserCode" parameterType="String" resultMap="userMap">
+        select * from `t_user` where `user_code` = #{userCode} and `is_del` = 1;
     </select>
+
+    <select id="getUsers" resultType="com.cyq.product.model.UserVo">
+        select
+            `id` as id, `user_code` as userCode, `user_name` as userName, `phone` as phone, `enabled` as enabled
+        from `t_user` where is_del = 1;
+    </select>
+
+    <insert id="addRoleForUser" parameterType="com.cyq.product.domain.UserRole">
+        insert into `t_user_role` (`user_id`, `role_id`) vaules
+        <foreach collection="userRoles" open="(" close=")" separator="," item="userRole">
+            #{userId}, #{roleId}
+        </foreach>
+    </insert>
 
 </mapper>

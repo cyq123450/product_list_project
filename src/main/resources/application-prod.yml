@@ -1,0 +1,5 @@
+logging:
+  path: /usr/app/app/logs
+  file: myLog.log
+  level:
+    root: INFO
