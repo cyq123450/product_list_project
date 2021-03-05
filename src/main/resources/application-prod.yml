@@ -3,3 +3,5 @@ logging:
   file: myLog.log
   level:
     root: INFO
+
+imagesStorageLocation: /usr/app/tomcat/apache-tomcat-8.5.63/webapps/images/

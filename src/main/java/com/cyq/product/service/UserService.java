@@ -1,5 +1,6 @@
 package com.cyq.product.service;
 
+import com.cyq.product.domain.UserDo;
 import com.cyq.product.domain.UserRole;
 import com.cyq.product.model.UserVo;
 
@@ -32,4 +33,16 @@ public interface UserService {
      */
     void addRoleForUser(List<UserRole> userRoles);
 
+    /**
+     * 根据用户代码查询是否有对应的用户
+     * @param userCode
+     * @return
+     */
+    int getUserByUserCode(String userCode);
+
+    /**
+     * 用户更新
+     * @param userDo
+     */
+    void updateUser(UserDo userDo);
 }

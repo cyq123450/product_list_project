@@ -6,6 +6,7 @@ import com.cyq.product.model.PageParamVo;
 import com.cyq.product.service.ProductService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,9 +23,8 @@ import java.util.UUID;
 @RequestMapping(value = "/api/product")
 public class ProductController {
 
-    private static final String FILE_UPLOAD_URI = File.separator + "usr" + File.pathSeparator + "app" + 
-            File.separator + "tomcat" + File.separator + "apache-tomcat-8.5.63" + File.separator + "webapps" +
-            File.separator + "images" + File.separator;
+    @Value("${imagesStorageLocation}")
+    private String FILE_UPLOAD_URI_BASE;
 
     // 文件访问的URL
     private static  final String FILE_URL_BASE = "http://192.144.229.245:8080/images/";
@@ -37,11 +37,11 @@ public class ProductController {
      * @param pageParamVo
      * @return
      */
-    @GetMapping("/get-all-products-page")
-    public CommonResult getProductsForPgae(@RequestBody PageParamVo pageParamVo) {
+    @PostMapping("/get-all-products-page")
+    public CommonResult getProductsForPgae(@RequestBody PageParamVo<ProductDo> pageParamVo) {
         try {
-            productService.getProductsForPgae(pageParamVo);
-            return CommonResult.success(pageParamVo);
+            PageParamVo datas = productService.getProductsForPgae(pageParamVo);
+            return CommonResult.success(datas);
         } catch (Exception e) {
             e.printStackTrace();
             log.error("获取商品信息失败...");
@@ -54,11 +54,11 @@ public class ProductController {
      * @param pageParamVo
      * @return
      */
-    @GetMapping("/sys-product/get-all-products")
-    public CommonResult getProducts(@RequestBody PageParamVo pageParamVo) {
+    @PostMapping("/sys-product/get-all-products")
+    public CommonResult getProducts(@RequestBody PageParamVo<ProductDo> pageParamVo) {
         try {
-            productService.getProducts(pageParamVo);
-            return CommonResult.success(pageParamVo);
+            PageParamVo products = productService.getProducts(pageParamVo);
+            return CommonResult.success(products);
         } catch (Exception e) {
             e.printStackTrace();
             log.error("获取商品信息失败...");
@@ -74,6 +74,7 @@ public class ProductController {
     public CommonResult saveProduct(@RequestBody PageParamVo<ProductDo> pageParamVo) {
         try {
             productService.saveProduct(pageParamVo.getDatas());
+            pageParamVo.setDatas(null);
             return getProducts(pageParamVo);
         } catch (Exception e) {
             e.printStackTrace();
@@ -94,18 +95,40 @@ public class ProductController {
         }
     }
 
-    @GetMapping("/sys-product/upload")
-    public CommonResult uploadFile(MultipartFile multipartFile, HttpServletRequest request) {
+    @GetMapping("/sys-product/del")
+    public CommonResult deleteProduct(String id) {
         try {
+            productService.delAndPublishProduct(id, 1, 2);
+            return CommonResult.success();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return CommonResult.failed();
+        }
+    }
 
+    @GetMapping("/sys-product/pub")
+    public CommonResult publishProduct(@RequestParam("id") String id, @RequestParam("opVal") Integer opVal) {
+        try {
+            productService.delAndPublishProduct(id, 2, opVal);
+            return CommonResult.success();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return CommonResult.failed();
+        }
+    }
+
+    @PostMapping("/sys-product/upload")
+    public CommonResult uploadFile(MultipartFile file, HttpServletRequest request) {
+        try {
+            String FILE_UPLOAD_URI = FILE_UPLOAD_URI_BASE.replace("\\/", File.separator);
             // 原始文件名字
-            String[] suffixNames = multipartFile.getOriginalFilename().split("\\.");
+            String[] suffixNames = file.getOriginalFilename().split("\\.");
             String suffixName= suffixNames[suffixNames.length-1];
             String imageName = UUID.randomUUID().toString().replace("-", "") + "." + suffixName;
 
             LocalDateTime dateTime = LocalDateTime.now();
             int day = dateTime.getDayOfWeek().getValue();
-            String tmpFile = "images" + day + File.separator + imageName;
+            String tmpFile = "images" + day;
             String tmpUrl = "images" + day + "/" + imageName;
             // 存储文件的位置
             File targetFile = new File(FILE_UPLOAD_URI + tmpFile);
@@ -114,8 +137,8 @@ public class ProductController {
             }
 
             // 开始文件上传
-            InputStream inputStream = multipartFile.getInputStream();
-            FileOutputStream fos = new FileOutputStream(targetFile);
+            InputStream inputStream = file.getInputStream();
+            FileOutputStream fos = new FileOutputStream(FILE_UPLOAD_URI + tmpFile + File.separator + imageName);
             byte[] buffer = new byte[1024];
             int len = 0;
             while ((len = inputStream.read(buffer)) != -1) {

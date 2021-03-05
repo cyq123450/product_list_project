@@ -62,7 +62,7 @@ public class RoleController {
     public CommonResult deleteRole(Integer id) {
         try {
             if (id == 1 || id == 2) {
-                return CommonResult.failed("系统管理员角色不允许删除");
+                return CommonResult.failed("根用户或系统管理员角色不允许删除");
             }
             roleService.deleteRole(id);
             return getRoles();

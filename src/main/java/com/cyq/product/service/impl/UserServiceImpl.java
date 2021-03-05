@@ -80,7 +80,25 @@ public class UserServiceImpl implements UserService {
         for(UserRole userRole : userRoles) {
             ids.add(userRole.getUserId());
         }
-        userMapper.deleteRoleForUser(ids);
+        roleMapper.deleteRoleForUser(ids);
         userMapper.addRoleForUser(userRoles);
+    }
+
+    @Override
+    public int getUserByUserCode(String userCode) {
+        return userMapper.getUserByUserCode(userCode);
+    }
+
+    @Override
+    public void updateUser(UserDo userDo) {
+        if (userDo.getId() == 1) {
+            if (userDo.getPassword() == null) {
+                return;
+            }
+            UserDo userDoNew = userMapper.findUserByUserCode(userDo.getUserCode());
+            userDoNew.setPassword(SecureUtil.md5(userDo.getPassword()));
+            userDo = userDoNew;
+        }
+        userMapper.updateUser(userDo);
     }
 }

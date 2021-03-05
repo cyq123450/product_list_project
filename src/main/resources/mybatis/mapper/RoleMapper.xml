@@ -12,7 +12,7 @@
 
     <select id="findRoles" resultType="com.cyq.product.model.RoleVo">
         select
-            `id`,  `role_name`, `info`, `enabled`
+            `id`,  `role_name` as roleName, `info`, `enabled`
         from `t_role` where is_del = 1 order by id
     </select>
 
@@ -42,7 +42,7 @@
             r.role_name as roleName,
             r.info as info from t_user_role ur
         left join
-            t_role r on ur.role_id = r.id and ur.user_id = #{userId} order by r.id
+            t_role r on ur.role_id = r.id and ur.user_id = #{userId} where r.is_del = 1 and r.enabled = 1 order by r.id
     </select>
 
     <update id="deleteRole" parameterType="com.cyq.product.model.RoleVo">

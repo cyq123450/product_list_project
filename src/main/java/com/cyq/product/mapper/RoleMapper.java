@@ -2,8 +2,10 @@ package com.cyq.product.mapper;
 
 import com.cyq.product.domain.UserRole;
 import com.cyq.product.model.RoleVo;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * 角色持久层接口
@@ -48,4 +50,9 @@ public interface RoleMapper {
      */
     int getUserRoleByRoleId(Integer roleId);
 
+    /**
+     * 删除用户角色
+     * @param ids
+     */
+    void deleteRoleForUser(@Param("ids") Set ids);
 }

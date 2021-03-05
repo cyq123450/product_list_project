@@ -1,5 +1,6 @@
 package com.cyq.product.controller;
 
+import com.cyq.product.domain.UserDo;
 import com.cyq.product.domain.UserRole;
 import com.cyq.product.model.CommonResult;
 import com.cyq.product.model.UserVo;
@@ -30,8 +31,12 @@ public class UserController {
     @PostMapping("/registry")
     public CommonResult registry(@RequestBody UserVo userVo) {
         try {
+            int retVal = userService.getUserByUserCode(userVo.getUserCode());
+            if (retVal > 0) {
+                return CommonResult.failed("该用户账号已被使用");
+            }
             if (userVo.getUserCode() == null || userVo.getUserName() ==null || userVo.getPassword() == null) {
-                return CommonResult.failed("用户代码或用户名或密码不能为空");
+                return CommonResult.failed("用户账号或用户名或密码不能为空");
             }
             userService.registry(userVo);
             return CommonResult.success("注册成功");
@@ -99,13 +104,29 @@ public class UserController {
     }
 
     @PostMapping("/sys-user/add-user-role")
-    public CommonResult addRoleForUser(List<UserRole> userRoles) {
+    public CommonResult addRoleForUser(@RequestBody List<UserRole> userRoles) {
         try {
+            for (UserRole userRole : userRoles) {
+                if (userRole.getUserId() == 1) {
+                    return CommonResult.failed("根用户不允许分配角色");
+                }
+            }
             userService.addRoleForUser(userRoles);
             return getUsers();
         } catch (Exception e) {
             e.printStackTrace();
             return CommonResult.failed("分配角色失败");
+        }
+    }
+
+    @PostMapping("/sys-user/update")
+    public CommonResult updateUser(@RequestBody UserDo userDo) {
+        try {
+            userService.updateUser(userDo);
+            return getUsers();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return CommonResult.failed("更新失败");
         }
     }
 

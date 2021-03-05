@@ -26,27 +26,39 @@ public class ProductServiceImpl implements ProductService {
     private ProductMapper productMapper;
 
     @Override
-    public void getProductsForPgae(PageParamVo pageParamVo) {
+    public PageParamVo getProductsForPgae(PageParamVo<ProductDo> pageParamVo) {
         Integer pageNum = pageParamVo.getPageNum();
         Integer pageSize = pageParamVo.getPageSize();
         PageHelper.startPage(pageNum, pageSize);
-        List<ProductDo> products = productMapper.getProductsForPgae();
+        List<ProductDo> products = productMapper.getProductsForPgae(pageParamVo.getDatas());
         PageInfo<ProductDo> pageInfo = new PageInfo<>(products);
-        pageParamVo.setDatas(pageInfo.getList());
-        pageParamVo.setTotalPage(pageInfo.getPages());
-        pageParamVo.setTotalNum(pageInfo.getTotal());
+        PageParamVo<Object> datas = new PageParamVo<>();
+        datas.setDatas(pageInfo.getList());
+        datas.setTotalPage(pageInfo.getPages());
+        datas.setTotalNum(pageInfo.getTotal());
+        datas.setPageNum(pageParamVo.getPageNum());
+        datas.setPageSize(pageParamVo.getPageSize());
+        return datas;
     }
 
     @Override
-    public void getProducts(PageParamVo pageParamVo) {
+    public PageParamVo getProducts(PageParamVo<ProductDo> pageParamVo) {
         Integer pageNum = pageParamVo.getPageNum();
         Integer pageSize = pageParamVo.getPageSize();
         PageHelper.startPage(pageNum, pageSize);
-        List<ProductDo> products = productMapper.getProducts();
+        ProductDo productDo = pageParamVo.getDatas();
+        if (productDo == null) {
+            productDo = new ProductDo();
+        }
+        List<ProductDo> products = productMapper.getProducts(productDo);
         PageInfo<ProductDo> pageInfo = new PageInfo<>(products);
-        pageParamVo.setDatas(pageInfo.getList());
-        pageParamVo.setTotalPage(pageInfo.getPages());
-        pageParamVo.setTotalNum(pageInfo.getTotal());
+        PageParamVo<Object> retData = new PageParamVo<>();
+        retData.setDatas(pageInfo.getList());
+        retData.setTotalPage(pageInfo.getPages());
+        retData.setTotalNum(pageInfo.getTotal());
+        retData.setPageNum(pageParamVo.getPageNum());
+        retData.setPageSize(pageParamVo.getPageSize());
+        return retData;
     }
 
     @Override
@@ -57,11 +69,11 @@ public class ProductServiceImpl implements ProductService {
         if (pId == null) {
             saveOperation = 1;
             pId = UUID.randomUUID().toString().replaceAll("-", "");
+            product.setId(pId);
             product.setCreateTime(new Date());
         }
         product.setUpdateTime(new Date());
-        product.setPublish(2);
-        if (saveOperation == 1) {
+        if (saveOperation == 0) {
             productMapper.deleteProduct(pId);
         }
         productMapper.saveProduct(product);
@@ -70,5 +82,10 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductDo getProduct(String id) {
         return productMapper.getProduct(id);
+    }
+
+    @Override
+    public void delAndPublishProduct(String id, int opertionType, int operationVal) {
+        productMapper.delAndPublishProduct(id, opertionType, operationVal);
     }
 }

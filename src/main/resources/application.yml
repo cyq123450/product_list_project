@@ -7,9 +7,7 @@ server:
 # ����Դ
 spring:
   profiles:
-    active: dev
-
-
+    active: prod
   datasource:
     url: jdbc:mysql://bj-cdb-73ejfibu.sql.tencentcdb.com:60900/product?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
     username: root
@@ -19,4 +17,6 @@ spring:
 
 mybatis:
   mapper-locations: classpath:mybatis/mapper/*.xml
+
+
 

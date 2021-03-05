@@ -16,7 +16,8 @@
         p_publish,
         p_details_info,
         p_create_time,
-        p_update_time
+        p_update_time,
+        p_order
     </sql>
 
     <resultMap id="productMap1" type="com.cyq.product.domain.ProductDo">
@@ -60,11 +61,18 @@
             p_name,
             p_origin_price,
             p_discount_price,
-            p_image_major_url,
-        from t_product where p_publish = 1 and p_del = 1 order by p_order
+            p_image_major_url
+        from t_product where p_publish = 1 and p_del = 1
+        <if test="name != null">
+            and p_name like concat('%', #{name}, '%')
+        </if>
+        <if test="desc != null">
+            and p_desc like concat('%', #{desc}, '%')
+        </if>
+        order by p_order
     </select>
 
-    <select id="getProducts" resultMap="productMap2">
+    <select id="getProducts" parameterType="com.cyq.product.domain.ProductDo" resultMap="productMap2">
         select
         id,
         p_name,
@@ -75,7 +83,14 @@
         p_create_time,
         p_update_time,
         p_order
-        from t_product where p_publish = 1 and p_del = 1 order by p_order
+        from t_product where p_del = 1
+        <if test="name != null">
+            and p_name like concat('%', #{name}, '%')
+        </if>
+        <if test="desc != null">
+            and p_desc like concat('%', #{desc}, '%')
+        </if>
+        order by p_order
     </select>
 
     <insert id="saveProduct" parameterType="com.cyq.product.domain.ProductDo">
@@ -90,12 +105,13 @@
             #{categoryName},
             #{postage},
             #{desc},
-            #{imageMajorUrl}
+            #{imageMajorUrl},
             #{imageUrls},
             #{publish},
             #{detailsInfo},
             #{createTime},
-            #{updateTime}
+            #{updateTime},
+            #{order}
         )
     </insert>
 
@@ -119,5 +135,20 @@
             p_order
         from t_product where id = #{id} limit 1
     </select>
+
+    <update id="delAndPublishProduct" parameterType="String">
+        update `t_product`
+        <set>
+            <if test="opType == 1">
+                <!--删除-->
+                p_del = #{opVal},
+            </if>
+            <if test="opType == 2">
+                <!--发布-->
+                p_publish = #{opVal},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
 
 </mapper>

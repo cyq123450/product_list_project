@@ -32,10 +32,36 @@
     </select>
 
     <insert id="addRoleForUser" parameterType="com.cyq.product.domain.UserRole">
-        insert into `t_user_role` (`user_id`, `role_id`) vaules
+        insert into `t_user_role` (`user_id`, `role_id`) values
         <foreach collection="userRoles" open="(" close=")" separator="," item="userRole">
-            #{userId}, #{roleId}
+            #{userRole.userId}, #{userRole.roleId}
         </foreach>
     </insert>
+
+    <select id="getUserByUserCode" parameterType="String" resultType="int">
+        select count(1) from `t_user` where user_code = #{userCode}
+    </select>
+
+    <update id="updateUser" parameterType="com.cyq.product.domain.UserDo">
+        update t_user
+        <set>
+            <if test="userName != null">
+                user_name = #{userName},
+            </if>
+            <if test="password != null">
+                password = #{password},
+            </if>
+            <if test="phone != null">
+                phone = #{phone},
+            </if>
+            <if test="del != null">
+                is_del = #{del},
+            </if>
+            <if test="enabled != null">
+                enabled = #{enabled}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
 
 </mapper>

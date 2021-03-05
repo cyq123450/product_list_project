@@ -19,7 +19,7 @@ public class UserDo {
     // 电话
     private String phone;
     // 是否删除
-    private String del;
+    private int del;
     // 是否生效
     private int enabled;
     // 角色
