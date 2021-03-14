@@ -85,7 +85,7 @@ public class ProductServiceImpl implements ProductService {
             synchronized (ProductServiceImpl.class) {
                 numId = ++productMaxIdBase;
             }
-            pId = String.valueOf("PM" + String.format("%06d", numId));
+            pId = String.valueOf("PZ" + String.format("%06d", numId));
             product.setId(pId);
             product.setCreateTime(new Date());
         }
