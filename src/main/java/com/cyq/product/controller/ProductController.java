@@ -27,7 +27,8 @@ public class ProductController {
     private String FILE_UPLOAD_URI_BASE;
 
     // 文件访问的URL
-    private static  final String FILE_URL_BASE = "http://192.144.229.245:8080/images/";
+    @Value("${imagesStorageUrl}")
+    private String FILE_URL_BASE;
     
     @Autowired
     private ProductService productService;

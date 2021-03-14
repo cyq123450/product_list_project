@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * 商品服务层接口实现类
@@ -21,6 +20,8 @@ import java.util.UUID;
 @Slf4j
 @Service
 public class ProductServiceImpl implements ProductService {
+
+    private static volatile Long productMaxIdBase = null;
 
     @Autowired
     private ProductMapper productMapper;
@@ -68,7 +69,23 @@ public class ProductServiceImpl implements ProductService {
         String pId = product.getId();
         if (pId == null) {
             saveOperation = 1;
-            pId = UUID.randomUUID().toString().replaceAll("-", "");
+            if (productMaxIdBase == null) {
+                synchronized (ProductServiceImpl.class) {
+                    if (productMaxIdBase == null) {
+                        String productMaxIdBaseStr = productMapper.getProductMaxId();
+                        if (productMaxIdBaseStr == null || "".equals(productMaxIdBaseStr)) {
+                            productMaxIdBase = 0L;
+                        } else {
+                            productMaxIdBase = Long.valueOf(productMaxIdBaseStr.substring(2, productMaxIdBaseStr.length()));
+                        }
+                    }
+                }
+            }
+            long numId = 0;
+            synchronized (ProductServiceImpl.class) {
+                numId = ++productMaxIdBase;
+            }
+            pId = String.valueOf("PM" + String.format("%06d", numId));
             product.setId(pId);
             product.setCreateTime(new Date());
         }

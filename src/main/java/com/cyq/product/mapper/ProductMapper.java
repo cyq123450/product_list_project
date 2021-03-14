@@ -49,4 +49,10 @@ public interface ProductMapper {
                               @Param("opType") int opertionType,
                               @Param("opVal") int operationVal);
 
+    /**
+     * 获取最大ID值
+     * @return
+     */
+    String getProductMaxId();
+
 }

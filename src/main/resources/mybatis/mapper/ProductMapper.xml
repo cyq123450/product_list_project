@@ -8,7 +8,7 @@
         p_name,
         p_origin_price,
         p_discount_price,
-        p_category_name,
+        p_classification,
         p_postage,
         p_desc,
         p_image_major_url,
@@ -17,7 +17,8 @@
         p_details_info,
         p_create_time,
         p_update_time,
-        p_order
+        p_order,
+        p_category
     </sql>
 
     <resultMap id="productMap1" type="com.cyq.product.domain.ProductDo">
@@ -26,6 +27,8 @@
         <result property="originPrice" column="p_origin_price"/>
         <result property="discountPrice" column="p_discount_price"/>
         <result property="imageMajorUrl" column="p_image_major_url"/>
+        <result property="classification" column="p_classification"/>
+        <result property="category" column="p_category"/>
     </resultMap>
 
     <resultMap id="productMap2" type="com.cyq.product.domain.ProductDo">
@@ -38,6 +41,8 @@
         <result property="createTime" column="p_create_time"/>
         <result property="updateTime" column="p_update_time"/>
         <result property="order" column="p_order"/>
+        <result property="category" column="p_category"/>
+        <result property="classification" column="p_classification"/>
     </resultMap>
 
     <resultMap id="productMap3" type="com.cyq.product.domain.ProductDo">
@@ -45,7 +50,7 @@
         <result property="name" column="p_name"/>
         <result property="originPrice" column="p_origin_price"/>
         <result property="discountPrice" column="p_discount_price"/>
-        <result property="categoryName" column="p_category_name"/>
+        <result property="classification" column="p_classification"/>
         <result property="postage" column="p_postage"/>
         <result property="desc" column="p_desc"/>
         <result property="imageMajorUrl" column="p_image_major_url"/>
@@ -53,6 +58,7 @@
         <result property="publish" column="p_publish"/>
         <result property="detailsInfo" column="p_details_info"/>
         <result property="order" column="p_order"/>
+        <result property="category" column="p_category"/>
     </resultMap>
 
     <select id="getProductsForPgae" resultMap="productMap1">
@@ -61,7 +67,9 @@
             p_name,
             p_origin_price,
             p_discount_price,
-            p_image_major_url
+            p_image_major_url,
+            p_classification,
+            p_category
         from t_product where p_publish = 1 and p_del = 1
         <if test="name != null">
             and p_name like concat('%', #{name}, '%')
@@ -69,7 +77,10 @@
         <if test="desc != null">
             and p_desc like concat('%', #{desc}, '%')
         </if>
-        order by p_order
+        <if test="category != null">
+            and p_category = #{category}
+        </if>
+        order by p_order ASC, p_update_time desc
     </select>
 
     <select id="getProducts" parameterType="com.cyq.product.domain.ProductDo" resultMap="productMap2">
@@ -82,7 +93,9 @@
         p_publish,
         p_create_time,
         p_update_time,
-        p_order
+        p_order,
+        p_category,
+        p_classification
         from t_product where p_del = 1
         <if test="name != null">
             and p_name like concat('%', #{name}, '%')
@@ -90,7 +103,10 @@
         <if test="desc != null">
             and p_desc like concat('%', #{desc}, '%')
         </if>
-        order by p_order
+        <if test="category != null">
+            and p_category = #{category}
+        </if>
+        order by p_order ASC, p_update_time DESC
     </select>
 
     <insert id="saveProduct" parameterType="com.cyq.product.domain.ProductDo">
@@ -102,7 +118,7 @@
             #{name},
             #{originPrice},
             #{discountPrice},
-            #{categoryName},
+            #{classification},
             #{postage},
             #{desc},
             #{imageMajorUrl},
@@ -111,7 +127,8 @@
             #{detailsInfo},
             #{createTime},
             #{updateTime},
-            #{order}
+            #{order},
+            #{category}
         )
     </insert>
 
@@ -125,14 +142,15 @@
             p_name,
             p_origin_price,
             p_discount_price,
-            p_category_name,
+            p_classification,
             p_postage,
             p_desc,
             p_image_major_url,
             p_image_urls,
             p_publish,
             p_details_info,
-            p_order
+            p_order,
+            p_category
         from t_product where id = #{id} limit 1
     </select>
 
@@ -150,5 +168,9 @@
         </set>
         where id = #{id}
     </update>
+
+    <select id="getProductMaxId" resultType="String">
+        select MAX(id) from t_product
+    </select>
 
 </mapper>

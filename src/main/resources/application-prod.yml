@@ -1,7 +1,3 @@
-logging:
-  path: /usr/app/app/logs
-  file: myLog.log
-  level:
-    root: INFO
 
 imagesStorageLocation: /usr/app/tomcat/apache-tomcat-8.5.63/webapps/images/
+imagesStorageUrl: http://192.144.229.245:8080/images/

@@ -1,10 +1,10 @@
- # �������˿ں�
 server:
   port: 9190
   servlet:
     context-path: /prot
+    session:
+      timeout: PT1H
 
-# ����Դ
 spring:
   profiles:
     active: prod

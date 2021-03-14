@@ -19,7 +19,7 @@ public class ProductDo {
     // 商品折后价
     private String discountPrice;
     // 商品种类名称
-    private String categoryName;
+    private String classification;
     // 邮费
     private String postage;
     // 商品描述
@@ -38,4 +38,6 @@ public class ProductDo {
     private Date updateTime;
     // 顺序
     private Integer order;
+    // 商品分类ID
+    private Integer category;
 }

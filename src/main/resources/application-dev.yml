@@ -3,3 +3,4 @@ mybatis:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
 imagesStorageLocation: D:/images/
+imagesStorageUrl: http://192.144.229.245:8080/images/
